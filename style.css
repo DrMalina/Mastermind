@@ -4,8 +4,140 @@
     box-sizing: border-box;    
 }
 
+html {
+    font-size: 10px;
+}
+
 body {
     background-color: #94644a;
     background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");
-/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */  
 }
+
+
+.container {
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title {
+    margin-top: 1rem;
+    color: white;
+}
+
+.title span {
+    display: inline-block;
+    width: 4rem;
+    height: 4rem;
+    background-color: yellow;
+    color: black;
+    line-height: 4rem;
+}
+
+.board {
+    width: 35rem;
+    height: 70rem;
+    margin-top: 2rem;
+    background-color: antiquewhite;
+    display: flex;
+    box-shadow: 0 0 2.2rem .2rem #000000;
+}
+
+/* GUESSES */
+
+.guesses {
+    flex-grow: 6;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.guess {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 3rem;
+}
+
+.hole {
+    border-radius: 50%;
+    background-color:antiquewhite;
+    filter: brightness(69%);    
+}
+
+.guess .hole {
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
+hr {
+    width: 75%;
+    margin: 0 auto;
+}
+
+/* HINTS */
+
+.pegs {
+    /* background-color: aqua; */
+    flex-grow: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.guess-hints {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: .5rem;
+    margin-top: 2.9rem;
+}
+
+.guess-hints:last-child {
+    margin-bottom: 1.5rem;
+}
+
+.guess-hints .hole {
+    width: 2rem;
+    height: 2rem;
+}
+
+.guess-hints .hole:first-child,
+.guess-hints .hole:nth-child(3) {
+    justify-self: end;
+}
+
+/* OPTIONS */
+
+.options {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    background-color: antiquewhite;
+    box-shadow: 0 0 2.2rem .2rem #000000;
+    padding: 2rem 1rem;
+}
+
+.options .hole {
+    width: 4.5rem;
+    height: 4.5rem;
+}
+
+.option {
+    margin-right: .5rem;
+}
+
+.undo {
+    font-size: 4rem;
+    line-height: 5rem;
+}
+
+/* OPTS COLORS */
+.red {background-color: red}
+.yellow{background-color: yellow}
+.orange{background-color: orange}
+.violet{background-color: rgb(243, 13, 243)}
+.green{background-color: rgb(8, 245, 8)}
+.blue{background-color: rgb(18, 221, 228)}
