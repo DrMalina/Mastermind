@@ -61,16 +61,22 @@ function isAlreadyChosen(array, color) {
 
 function incrementHoles() {
     if(state.currentHole < 3) {
-       state.currentHole++;
+       state.currentHole++; //move to the next hole
     } else {
-        incrementRows();
+        incrementRows(); //if all 4 holes are set, increment row
     }
 }
 
 function incrementRows() {
-    if(state.row < 8) {
-        state.row++;
-        state.currentHole = 0;
+    if(state.row < 8) { // 8 chances (rows) for guessing the code
+
+        const currentRow = guesses[guesses.length - state.row]; // take current row
+        const guess =  [...currentRow.children].map( hole => hole.dataset.color); // user guess from curr row
+
+        checkCode(guess); //check guess, compare with code
+
+        state.row++;  // move to the next row
+        state.currentHole = 0; //reset holes 
     } else {
         console.log('YOU LOSE!')
         //DO WHEN LOSING
@@ -79,13 +85,13 @@ function incrementRows() {
 
 function createCode() {
     let code = [];
-    let randomizedArray = shuffle(optionsColors);
+    let randomizedArray = shuffle(optionsColors); //randomize colors
 
    for(let i=0; i < 4; i++) {
-    code.push(randomizedArray[i]);
-   }
+    code.push(randomizedArray[i]); //take 4 colors as a code
+   } 
 
-   state.code = code;
+   state.code = code; //update global state
 }
 
 function shuffle(array) { //Fisher-Yates Shuffle 
@@ -95,6 +101,24 @@ function shuffle(array) { //Fisher-Yates Shuffle
     }
 
     return array;
+}
+
+function checkCode(guess) {
+    let hints = [];
+
+    guess.forEach(peg => {        
+        if(state.code.includes(peg)) {
+            const indexGuess = guess.indexOf(peg);
+            const indexCode = state.code.indexOf(peg)
+            indexGuess === indexCode ? hints.push('black') : hints.push('white');
+        }
+    });
+
+   return hints = hints.sort();
+
+    /* console.log(guess);
+    console.log(state.code);
+    console.log(hints); */
 }
 
 /* LISTENERS */
