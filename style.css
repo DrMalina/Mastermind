@@ -10,7 +10,7 @@ html {
 
 body {
     background-color: burlywood;
-    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png"); 
+    /* background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png");  */
 
     font-family: 'Nunito Sans', sans-serif;
     font-weight: 400;
@@ -239,6 +239,32 @@ button {
     color: black;
     padding: 1rem 2rem;
 
+}
+
+@media only screen and (max-width: 45rem) {
+    .board{
+        width: 100vw;
+    }
+
+    .options {
+        width: 100vw;
+        position: sticky;
+        bottom: 0;
+        margin-top: 0;
+        z-index: 10;
+        box-shadow: none;
+        border: 1px solid brown;
+    }
+}
+
+@media only screen and (max-width: 35rem) {
+    .rows {
+        margin-left: .8rem;
+    }
+
+    .guess {
+        margin: 0 1rem;
+    }
 }
 
 
