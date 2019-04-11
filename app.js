@@ -1,31 +1,16 @@
 const options = [...document.querySelectorAll('.option')];
 const optionsColors = options.map(opt => opt.dataset.color);
 const guesses = [...document.querySelectorAll('.guess')];
+const hints = [...document.querySelectorAll('.guess-hints')]
 const undo = document.querySelector('.undo');
 
 
 let state = {
-    row: 1,
+    row: 7,
     currentHole: 0,
-    code: []
+    code: [],
+    win: ''
 };
-
-/* function insertGuess(e) {
-    const optionColor = e.target.dataset.color; // check which option was chosen
-    const currentRow = guesses[guesses.length - state.row]; // curr row
-    const currentHoles = [...currentRow.children]; // all holes in curr row
-    const currentHolesColors = currentHoles.map(opt => opt.dataset.color);
-
-    if(!isAlreadyChosen(currentHoles, optionColor)){ //check if color was already chosen in a row
-
-        //Add a chosen color as peg 
-        currentHoles[state.currentHole].classList.add(optionColor);
-        currentHoles[state.currentHole].dataset.color = optionColor; //set data color
-        incrementHoles(); //move to the next hole
-    } 
-
-    console.log(currentHolesColors);
-} */
 
 function insertGuess(e) {
     const optionColor = e.target.dataset.color; // check which option(color) was chosen
@@ -33,7 +18,7 @@ function insertGuess(e) {
     const currentHoles = [...currentRow.children]; // all holes in curr row
     const currentHolesColors = currentHoles.map(opt => opt.dataset.color); // array of colors in current row
 
-    if(!isAlreadyChosen(currentHolesColors, optionColor)){ //check if color was already chosen in a row previously
+    if(!isAlreadyChosen(currentHolesColors, optionColor) && state.win === ''){ //check if color was already chosen in a row previously
 
         currentHoles[state.currentHole].classList.add(optionColor);//Add a chosen color as peg 
         currentHoles[state.currentHole].dataset.color = optionColor; //set data color
@@ -43,7 +28,7 @@ function insertGuess(e) {
 }
 
 function removeGuess() {    
-    if(state.currentHole > 0) { //only execute when curr Hole is != 0
+    if(state.currentHole > 0 && state.win === '') { //only execute when curr Hole is != 0
 
         const currentRow = guesses[guesses.length - state.row]; // curr row
         const currentHoles = [...currentRow.children].filter(hole => hole.dataset.color); // all holes in curr row selected by player already
@@ -68,16 +53,18 @@ function incrementHoles() {
 }
 
 function incrementRows() {
-    if(state.row < 8) { // 8 chances (rows) for guessing the code
+    const currentRow = guesses[guesses.length - state.row]; // take current row
+    const guess =  [...currentRow.children].map( hole => hole.dataset.color); // user guess from curr row
 
-        const currentRow = guesses[guesses.length - state.row]; // take current row
-        const guess =  [...currentRow.children].map( hole => hole.dataset.color); // user guess from curr row
+    if(state.row < 8) { // 8 chances (rows) for guessing the code
 
         checkCode(guess); //check guess, compare with code
 
         state.row++;  // move to the next row
         state.currentHole = 0; //reset holes 
     } else {
+        checkCode(guess);
+        state.win = false;
         console.log('YOU LOSE!')
         //DO WHEN LOSING
     }
@@ -107,19 +94,40 @@ function checkCode(guess) {
     let hints = [];
 
     guess.forEach(peg => {        
-        if(state.code.includes(peg)) {
-            const indexGuess = guess.indexOf(peg);
-            const indexCode = state.code.indexOf(peg)
-            indexGuess === indexCode ? hints.push('black') : hints.push('white');
+        if(state.code.includes(peg)) { //if code includes peg, execute
+            const indexGuess = guess.indexOf(peg); //indx in guess
+            const indexCode = state.code.indexOf(peg) // inx in code
+            indexGuess === indexCode ? hints.push('black') : hints.push('white'); //if the same index (same place of peg) show black hint, if not same index show white
         }
     });
 
-   return hints = hints.sort();
+    hints = hints.sort(); // sort so first goes blacks then whites
+
+    didWin(hints);
+    populateHints(hints);
 
     /* console.log(guess);
     console.log(state.code);
     console.log(hints); */
 }
+
+function populateHints(array) {
+    const currentRow = hints[hints.length - state.row]; 
+    const hintHoles = currentRow.children;
+    const numOfHints = array.length; // number of hints received eg.: 2 white, 1 black
+
+    for(let i=0; i < numOfHints; i++) {
+        hintHoles[i].classList.add(array[i]); //displaying hints for user
+    }
+}
+
+function didWin(hints) {
+    if(hints.every(hint => hint === 'black')) {
+        console.log('You Won!')
+        state.win = true;
+    }
+}
+
 
 /* LISTENERS */
 options.forEach(option => option.addEventListener('click', insertGuess));

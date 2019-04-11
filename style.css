@@ -142,6 +142,10 @@ hr {
 .green{background-color: green}
 .blue{background-color: blue}
 
+/* HINTS */
+.black {background-color: black}
+.white {background-color: white} 
+
 /* 
 .violet{background-color: rgb(243, 13, 243)}
 .green{background-color: rgb(8, 245, 8)}
