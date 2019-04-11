@@ -5,12 +5,7 @@ const hints = [...document.querySelectorAll('.guess-hints')]
 const undo = document.querySelector('.undo');
 
 
-let state = {
-    row: 7,
-    currentHole: 0,
-    code: [],
-    win: ''
-};
+let state = {};
 
 function insertGuess(e) {
     const optionColor = e.target.dataset.color; // check which option(color) was chosen
@@ -18,7 +13,7 @@ function insertGuess(e) {
     const currentHoles = [...currentRow.children]; // all holes in curr row
     const currentHolesColors = currentHoles.map(opt => opt.dataset.color); // array of colors in current row
 
-    if(!isAlreadyChosen(currentHolesColors, optionColor) && state.win === ''){ //check if color was already chosen in a row previously
+    if(!isAlreadyChosen(currentHolesColors, optionColor)){ //check if color was already chosen in a row previously
 
         currentHoles[state.currentHole].classList.add(optionColor);//Add a chosen color as peg 
         currentHoles[state.currentHole].dataset.color = optionColor; //set data color
@@ -28,7 +23,7 @@ function insertGuess(e) {
 }
 
 function removeGuess() {    
-    if(state.currentHole > 0 && state.win === '') { //only execute when curr Hole is != 0
+    if(state.currentHole > 0 ) { //only execute when curr hole is not empty
 
         const currentRow = guesses[guesses.length - state.row]; // curr row
         const currentHoles = [...currentRow.children].filter(hole => hole.dataset.color); // all holes in curr row selected by player already
@@ -62,11 +57,10 @@ function incrementRows() {
 
         state.row++;  // move to the next row
         state.currentHole = 0; //reset holes 
-    } else {
-        checkCode(guess);
-        state.win = false;
-        console.log('YOU LOSE!')
-        //DO WHEN LOSING
+
+    } else { // if did not guess after 8 rounds
+        state.win = false; // set win to false
+        popup(); //display popup message
     }
 }
 
@@ -97,18 +91,15 @@ function checkCode(guess) {
         if(state.code.includes(peg)) { //if code includes peg, execute
             const indexGuess = guess.indexOf(peg); //indx in guess
             const indexCode = state.code.indexOf(peg) // inx in code
-            indexGuess === indexCode ? hints.push('black') : hints.push('white'); //if the same index (same place of peg) show black hint, if not same index show white
+            indexGuess === indexCode ? hints.push('black') : hints.push('white'); //if the same index (same place of peg) then show black hint, if not same index, show white
         }
     });
 
-    hints = hints.sort(); // sort so first goes blacks then whites
+    hints = hints.sort(); // sort so first goes blacks then whites nevertheless the queue
 
-    didWin(hints);
-    populateHints(hints);
+    didWin(hints);//check if player has won
 
-    /* console.log(guess);
-    console.log(state.code);
-    console.log(hints); */
+    populateHints(hints); //display hints on board
 }
 
 function populateHints(array) {
@@ -122,9 +113,47 @@ function populateHints(array) {
 }
 
 function didWin(hints) {
-    if(hints.every(hint => hint === 'black')) {
-        console.log('You Won!')
-        state.win = true;
+    if(hints.every(hint => hint === 'black')) { //if every hint is black meaning correct pegs on correct places
+        state.win = true; //set win as true
+        popup(); //display message popup
+    }
+}
+
+function popup() {
+    const markup = `
+        <div class="popup ${state.win === true ? 'win' : 'lose'}">
+            <div class="popup__content">
+                <h2>${state.win === true ? 'You won!' : 'You lose!'}</h2>
+                <p>The code was:</p>
+                <div class="secret-code guess">
+                    <div class="hole ${state.code[0]}"></div>
+                    <div class="hole ${state.code[1]}"></div>
+                    <div class="hole ${state.code[2]}"></div>
+                    <div class="hole ${state.code[3]}"></div>
+                </div>
+                <button>Try again!</button>
+            </div>
+        </div>
+    `;
+
+    document.querySelector('body').insertAdjacentHTML('beforeend', markup); //insert popup to html
+    
+}
+
+function initGame() {
+    state = {  //set starting values
+        row: 1,
+        currentHole: 0,
+        code: [],
+        win: ''
+    }
+
+    createCode();
+}
+
+function restartGame(e) {
+    if(e.target.closest('button')) {
+        window.location.reload();
     }
 }
 
@@ -133,4 +162,6 @@ function didWin(hints) {
 options.forEach(option => option.addEventListener('click', insertGuess));
 undo.addEventListener('click', removeGuess);
 
-createCode();
+document.querySelector('body').addEventListener('click', restartGame);
+
+initGame();

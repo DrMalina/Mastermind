@@ -9,10 +9,14 @@ html {
 }
 
 body {
-    background-color: #94644a;
-   /*  background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png"); */
+    background-color: burlywood;
+    background-image: url("https://www.transparenttextures.com/patterns/wood-pattern.png"); 
+
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 400;
 }
 
+/* CONTAINER OF ALL ELEMENTS */
 
 .container {
     margin: 0 auto;
@@ -36,19 +40,34 @@ body {
     line-height: 4rem;
 }
 
+.rows {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-left: 2rem;
+}
+
+.rows span {
+    display: block;
+    font-size: 2rem;
+    color: #684532;
+}
+
 .board {
     width: 35rem;
-    height: 70rem;
+    min-height: 65rem;
     margin-top: 2rem;
-    background-color: antiquewhite;
+    background-color: #94644a;
     display: flex;
     box-shadow: 0 0 2.2rem .2rem #000000;
+
+    border-radius: 1rem;
 }
 
 /* GUESSES */
 
 .guesses {
-    flex-grow: 6;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -57,13 +76,13 @@ body {
 .guess {
     display: flex;
     justify-content: space-around;
+    align-items: center;
     margin: 0 3rem;
 }
 
 .hole {
     border-radius: 50%;
-    background-color:antiquewhite;
-    filter: brightness(69%);    
+    background-color:#684532;   
 }
 
 .guess .hole {
@@ -71,19 +90,13 @@ body {
     height: 4.5rem;
 }
 
-hr {
-    width: 75%;
-    margin: 0 auto;
-}
-
 /* HINTS */
 
 .pegs {
-    /* background-color: aqua; */
-    flex-grow: 4;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    margin-right: 2rem;
 }
 
 .guess-hints {
@@ -91,7 +104,7 @@ hr {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     grid-gap: .5rem;
-    margin-top: 2.9rem;
+    margin-bottom: 3.7rem;
 }
 
 .guess-hints:last-child {
@@ -115,7 +128,7 @@ hr {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
-    background-color: antiquewhite;
+    background-color: #94644a;
     box-shadow: 0 0 2.2rem .2rem #000000;
     padding: 2rem 1rem;
 }
@@ -132,6 +145,20 @@ hr {
 .undo {
     font-size: 4rem;
     line-height: 5rem;
+    color: white;
+}
+
+.option, .undo {
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.option:hover {
+    transform: scale(1.1) translateY(-.6rem);
+}
+
+.undo:hover {
+    transform: scale(1.1) rotate(-45deg);
 }
 
 /* OPTS COLORS */
@@ -146,7 +173,72 @@ hr {
 .black {background-color: black}
 .white {background-color: white} 
 
-/* 
-.violet{background-color: rgb(243, 13, 243)}
-.green{background-color: rgb(8, 245, 8)}
-.blue{background-color: rgb(18, 221, 228)} */
+/* POPUP  */
+
+.popup {
+    width: 100vw;
+    height: 100vh;
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+    align-content: center;
+    align-items: center;
+}
+
+.popup__content {
+    border: .7rem solid white;
+    padding: 2rem 3rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+    align-content: center;
+    align-items: center;
+}
+
+.popup__content p, h2 {
+    margin-bottom: .5rem;
+}
+
+.win {
+    background: linear-gradient(-45deg, #a5c956 90%, #cdeb8e 100%);
+}
+
+.lose {
+    background: linear-gradient(-45deg, #e9655c 90%, #e47162 100%);
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+p {
+    font-size: 1.5rem;
+}
+
+.secret-code {
+    margin-top: .5rem;
+    margin-bottom: 1rem;
+}
+
+.secret-code .hole:not(:last-child) {
+    margin-right: 1rem;
+}
+
+button {
+    border: none;
+    border-radius: 3px;
+    background-color: white;
+    color: black;
+    padding: 1rem 2rem;
+
+}
+
+
