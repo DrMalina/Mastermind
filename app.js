@@ -164,4 +164,6 @@ undo.addEventListener('click', removeGuess);
 
 document.querySelector('body').addEventListener('click', restartGame);
 
+/* INIT GAME */
+
 initGame();
