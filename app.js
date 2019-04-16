@@ -1,45 +1,48 @@
+/* DOM ELEMENTS */
 const options = [...document.querySelectorAll('.option')];
 const optionsColors = options.map(opt => opt.dataset.color);
 const guesses = [...document.querySelectorAll('.guess')];
 const hints = [...document.querySelectorAll('.guess-hints')]
 const undo = document.querySelector('.undo');
 
-
+/* STATE KEEPING THE CURRENT DATA */
 let state = {};
 
-function insertGuess(e) {
+const getCurrent = query => { 
+    const row = query[query.length - state.row];
+    const holes = [...row.children];
+    const colors = holes.map(hole => hole.dataset.color);
+    const allSelected = holes.filter(hole => hole.dataset.color);
+    const lastPicked = allSelected[allSelected.length - 1];
+
+    return [row, holes, colors, lastPicked];
+}
+
+const insertGuess = e => {
     const optionColor = e.target.dataset.color; // check which option(color) was chosen
-    const currentRow = guesses[guesses.length - state.row]; // curr row
-    const currentHoles = [...currentRow.children]; // all holes in curr row
-    const currentHolesColors = currentHoles.map(opt => opt.dataset.color); // array of colors in current row
+    const [, holes, colors] = getCurrent(guesses);
 
-    if(!isAlreadyChosen(currentHolesColors, optionColor)){ //check if color was already chosen in a row previously
+    if(!isAlreadyChosen(colors, optionColor)){ //check if color was already chosen in a row previously
 
-        currentHoles[state.currentHole].classList.add(optionColor);//Add a chosen color as peg 
-        currentHoles[state.currentHole].dataset.color = optionColor; //set data color
+        holes[state.currentHole].classList.add(optionColor);//Add a chosen color as peg 
+        holes[state.currentHole].dataset.color = optionColor; //set data color
         incrementHoles(); //move to the next hole
     } 
 
 }
 
-function removeGuess() {    
+const removeGuess = () => {    
     if(state.currentHole > 0 ) { //only execute when curr hole is not empty
 
-        const currentRow = guesses[guesses.length - state.row]; // curr row
-        const currentHoles = [...currentRow.children].filter(hole => hole.dataset.color); // all holes in curr row selected by player already
-        const lastPickedColor = currentHoles[currentHoles.length - 1].dataset.color; //last color inserted
+        const [,,,lastPicked] = getCurrent(guesses);
 
-        currentHoles[currentHoles.length - 1].classList.remove(lastPickedColor); //remove class from the last peg
-        delete currentHoles[currentHoles.length - 1].dataset.color; //remove dataset from the last peg
+        lastPicked.classList.remove(lastPicked.dataset.color); //remove class from the last peg
+        delete lastPicked.dataset.color; //remove dataset from the last peg
         state.currentHole--; //decrement curr hole 
     }
 }
 
-function isAlreadyChosen(array, color) {
-    return array.some(el => el === color);
-}
-
-function incrementHoles() {
+const incrementHoles = () => {
     if(state.currentHole < 3) {
        state.currentHole++; //move to the next hole
     } else {
@@ -47,9 +50,8 @@ function incrementHoles() {
     }
 }
 
-function incrementRows() {
-    const currentRow = guesses[guesses.length - state.row]; // take current row
-    const guess =  [...currentRow.children].map( hole => hole.dataset.color); // user guess from curr row
+const incrementRows = () => {
+    const [,, guess] = getCurrent(guesses);
 
     if(state.row < 8) { // 8 chances (rows) for guessing the code
 
@@ -64,7 +66,7 @@ function incrementRows() {
     }
 }
 
-function createCode() {
+const createCode = () => {
     let code = [];
     let randomizedArray = shuffle(optionsColors); //randomize colors
 
@@ -72,25 +74,16 @@ function createCode() {
     code.push(randomizedArray[i]); //take 4 colors as a code
    } 
 
-   state.code = code; //update global state
+   return code;
 }
 
-function shuffle(array) { //Fisher-Yates Shuffle 
-    for (let i = array.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
-      [array[i], array[j]] = [array[j], array[i]]; // swap elements
-    }
-
-    return array;
-}
-
-function checkCode(guess) {
+const checkCode = guess => {
     let hints = [];
 
     guess.forEach(peg => {        
-        if(state.code.includes(peg)) { //if code includes peg, execute
-            const indexGuess = guess.indexOf(peg); //indx in guess
-            const indexCode = state.code.indexOf(peg) // inx in code
+        if(state.code.includes(peg)) { //if code includes peg then execute
+            const indexGuess = guess.indexOf(peg); 
+            const indexCode = state.code.indexOf(peg) 
             indexGuess === indexCode ? hints.push('black') : hints.push('white'); //if the same index (same place of peg) then show black hint, if not same index, show white
         }
     });
@@ -102,24 +95,24 @@ function checkCode(guess) {
     populateHints(hints); //display hints on board
 }
 
-function populateHints(array) {
-    const currentRow = hints[hints.length - state.row]; 
-    const hintHoles = currentRow.children;
+const populateHints = array => {
+
+    const [, holes] = getCurrent(hints);
     const numOfHints = array.length; // number of hints received eg.: 2 white, 1 black
 
     for(let i=0; i < numOfHints; i++) {
-        hintHoles[i].classList.add(array[i]); //displaying hints for user
+        holes[i].classList.add(array[i]); //displaying hints for user
     }
 }
 
-function didWin(hints) {
+const didWin = hints => {
     if(hints.every(hint => hint === 'black')) { //if every hint is black meaning correct pegs on correct places
         state.win = true; //set win as true
         popup(); //display message popup
     }
 }
 
-function popup() {
+const popup = () => {
     const markup = `
         <div class="popup ${state.win === true ? 'win' : 'lose'}">
             <div class="popup__content">
@@ -140,21 +133,35 @@ function popup() {
     
 }
 
-function initGame() {
+const initGame = () => {
     state = {  //set starting values
         row: 1,
         currentHole: 0,
-        code: [],
+        code: createCode(),
         win: ''
     }
 
-    createCode();
 }
 
-function restartGame(e) {
+const restartGame = e => {
     if(e.target.closest('button')) {
         window.location.reload();
     }
+}
+
+/* ************** */
+
+const isAlreadyChosen = (array, color) => {
+    return array.some(el => el === color);
+}
+
+const shuffle = array => { //Fisher-Yates Shuffle 
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+      [array[i], array[j]] = [array[j], array[i]]; // swap elements
+    }
+
+    return array;
 }
 
 
