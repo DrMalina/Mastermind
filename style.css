@@ -272,13 +272,14 @@ button {
 
 }
 
-@media only screen and (max-width: 450px) {
+@media only screen and (max-width: 400px) {
     .board{
-        width: 100vw;
+        width: 90vw;
+        min-height: auto;
     }
 
     .options {
-        width: 100vw;
+        width: 90vw;
         position: sticky;
         bottom: 0;
         margin-top: 0;
@@ -286,6 +287,35 @@ button {
         box-shadow: none;
         border: 1px solid brown;
     }
+
+    .guesses .hole,
+    .options .hole {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .guess-hints {
+        margin-top: .8rem;
+        margin-bottom: .8rem;
+    }
+
+    .guess-hints:last-child {
+        margin-bottom: .8rem;
+    }
+
+    .options {
+        padding: 1rem 1rem;
+    }
+
+    .option {
+        margin-right: .8rem;
+    }
+
+    .undo {
+        font-size: 3rem;
+        line-height: 3rem;
+    }
+
 }
 
 @media only screen and (max-width: 350px) {
